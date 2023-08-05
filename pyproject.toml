@@ -9,7 +9,7 @@ packages = [{include = "veilid_demo"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-veilid = { git = "git@gitlab.com:veilid/veilid.git", branch = "main", subdirectory = "veilid-python" }
+veilid = "^0.1.7"
 
 [tool.poetry.scripts]
 chat = 'veilid_demo.chat:handle_command_line'

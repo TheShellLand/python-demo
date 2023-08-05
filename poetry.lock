@@ -179,21 +179,16 @@ name = "veilid"
 version = "0.1.7"
 description = ""
 optional = false
-python-versions = "^3.11"
-files = []
-develop = false
+python-versions = ">=3.11,<4.0"
+files = [
+    {file = "veilid-0.1.7-py3-none-any.whl", hash = "sha256:422af84e2c8b5f41d14780387c995ed523fbeb8fd13c069775722aa44a587323"},
+    {file = "veilid-0.1.7.tar.gz", hash = "sha256:1e21c36061346bc075f74601d10bd30ee81113c47b2dc2d994a7acbf0f8e3e87"},
+]
 
 [package.dependencies]
-jsonschema = "^4.17.3"
-
-[package.source]
-type = "git"
-url = "git@gitlab.com:veilid/veilid.git"
-reference = "main"
-resolved_reference = "196bc38e815515180e016f724dfb46432b0811e1"
-subdirectory = "veilid-python"
+jsonschema = ">=4.17.3,<5.0.0"
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cb60eeea3a07c6faa0d5097ddb88ac3aa27e3a532ea70a19d1f6b24724b9bd50"
+content-hash = "87c6c85136ae233d0701dc6d9bb6493d83ba843485b14bdf26080185d741397b"
