@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "veilid-demo"
+version = "0.1.0"
+description = "Demonstrate the Veilid decentralized application framework"
+authors = ["Your Name <you@example.com>"]
+license = "MPL-2.0"
+readme = "README.md"
+packages = [{include = "veilid_demo"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+veilid = { git = "git@gitlab.com:veilid/veilid.git", branch = "main", subdirectory = "veilid-python" }
+
+[tool.poetry.scripts]
+chat = 'veilid_demo.chat:handle_command_line'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
