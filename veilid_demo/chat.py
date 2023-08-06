@@ -5,6 +5,7 @@
 import argparse
 import asyncio
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 from veilid_demo import config
@@ -21,17 +22,21 @@ async def noop_callback(*args, **kwargs):
     return
 
 
-async def chatter(
+async def async_input(prompt: str = "") -> str:
+    """A non-blocking version of input()."""
+
+    with ThreadPoolExecutor(1, "async_input") as executor:
+        return await asyncio.get_event_loop().run_in_executor(executor, input, prompt)
+
+
+async def sender(
     router: veilid.api.RoutingContext,
     crypto_system: veilid.CryptoSystem,
     key: veilid.TypedKey,
     secret: veilid.SharedSecret,
     send_subkey: veilid.ValueSubkey,
-    recv_subkey: veilid.ValueSubkey,
 ):
-    """Read input, write it to the DHT, and print the response from the DHT."""
-
-    last_seq = -1
+    """Read input and write it to the DHT."""
 
     async def encrypt(cleartext: str) -> bytes:
         """Encrypt the message with the shared secret and a random nonce."""
@@ -39,6 +44,37 @@ async def chatter(
         nonce = await crypto_system.random_nonce()
         encrypted = await crypto_system.crypt_no_auth(cleartext.encode(), nonce, secret)
         return nonce.to_bytes() + encrypted
+
+    async def send(cleartext: str):
+        """Write the encrypted version of the text to the DHT."""
+
+        await router.set_dht_value(key, send_subkey, await encrypt(cleartext))
+
+    # Prime the pumps. Especially when starting the conversation, this
+    # causes the DHT key to propagate to the network.
+    await send("Hello from the world!")
+
+    while True:
+        try:
+            msg = await async_input("SEND> ")
+        except EOFError:
+            # Cat got your tongue? Hang up.
+            print("Closing the chat.")
+            await send(QUIT)
+            return
+
+        # Write the input message to the DHT key.
+        await send(msg)
+
+
+async def receiver(
+    router: veilid.api.RoutingContext,
+    crypto_system: veilid.CryptoSystem,
+    key: veilid.TypedKey,
+    secret: veilid.SharedSecret,
+    recv_subkey: veilid.ValueSubkey,
+):
+    """Wait for new data from the DHT and write it to the screen."""
 
     async def decrypt(payload: bytes) -> str:
         """Decrypt the payload with the shared secret and the payload's nonce."""
@@ -48,44 +84,29 @@ async def chatter(
         cleartext = await crypto_system.crypt_no_auth(encrypted, nonce, secret)
         return cleartext.decode()
 
-    # Prime the pumps. Especially when starting the conversation, this
-    # causes the DHT key to propagate to the network.
-    await router.set_dht_value(key, send_subkey, await encrypt("Hello from the world!"))
-
+    last_seq = -1
     while True:
-        try:
-            msg = input("SEND> ")
-        except EOFError:
-            # Cat got your tongue? Hang up.
-            print("Closing the chat.")
-            await router.set_dht_value(key, send_subkey, await encrypt(QUIT))
-            return
-
-        # Write the input message to the DHT key.
-        await router.set_dht_value(key, send_subkey, await encrypt(msg))
-
         # In the real world, don't do this. People may tease you for it.
         # This is meant to be easy to understand for demonstration
         # purposes, not a great pattern. Instead, you'd want to use the
         # callback function to handle events asynchronously.
-        while True:
-            # Try to get an updated version of the receiving subkey.
-            resp = await router.get_dht_value(key, recv_subkey, True)
-            if resp is None:
-                continue
 
-            # If the other party hasn't sent a newer message, try again.
-            if resp.seq == last_seq:
-                continue
+        # Try to get an updated version of the receiving subkey.
+        resp = await router.get_dht_value(key, recv_subkey, True)
+        if resp is None:
+            continue
 
-            msg = await decrypt(resp.data)
-            if msg == QUIT:
-                print("Other end closed the chat.")
-                return
+        # If the other party hasn't sent a newer message, try again.
+        if resp.seq == last_seq:
+            continue
 
-            print(f"RECV< {msg}")
-            last_seq = resp.seq
-            break
+        msg = await decrypt(resp.data)
+        if msg == QUIT:
+            print("Other end closed the chat.")
+            return
+
+        print(f"\nRECV< {msg}")
+        last_seq = resp.seq
 
 
 async def start(host: str, port: int, name: str):
@@ -116,12 +137,24 @@ async def start(host: str, port: int, name: str):
 
         await router.open_dht_record(record.key, my_keypair)
 
+        # The party initiating the chat writes to subkey 0 and reads from subkey 1.
+        send_task = asyncio.create_task(
+            sender(router, crypto_system, record.key, secret, 0)
+        )
+        recv_task = asyncio.create_task(
+            receiver(router, crypto_system, record.key, secret, 1)
+        )
+
         try:
-            # Write to the 1st subkey and read from the 2nd.
-            await chatter(router, crypto_system, record.key, secret, 0, 1)
+            await asyncio.wait(
+                [send_task, recv_task], return_when=asyncio.FIRST_COMPLETED
+            )
         finally:
             await router.close_dht_record(record.key)
             await router.delete_dht_record(record.key)
+
+        recv_task.cancel()
+        send_task.cancel()
 
 
 async def respond(host: str, port: int, name: str, key: str):
@@ -140,8 +173,21 @@ async def respond(host: str, port: int, name: str, key: str):
 
         await router.open_dht_record(key, my_keypair)
 
-        # As the responder, we're writing to the 2nd subkey and reading from the 1st.
-        await chatter(router, crypto_system, key, secret, 1, 0)
+        # The party responding to the chat writes to subkey 1 and reads from subkey 0.
+        send_task = asyncio.create_task(sender(router, crypto_system, key, secret, 1))
+        recv_task = asyncio.create_task(receiver(router, crypto_system, key, secret, 0))
+
+        try:
+            # Write to the 1st subkey and read from the 2nd.
+            await asyncio.wait(
+                [send_task, recv_task], return_when=asyncio.FIRST_COMPLETED
+            )
+        finally:
+            await router.close_dht_record(key)
+            await router.delete_dht_record(key)
+
+        recv_task.cancel()
+        send_task.cancel()
 
 
 async def keygen(host: str, port: int):
@@ -232,4 +278,3 @@ def handle_command_line(arglist: Optional[list[str]] = None):
 
 if __name__ == "__main__":
     handle_command_line()
-
