@@ -3,10 +3,11 @@
 Thanks for reading! This chat program is meant to be a simple, readable demonstration of how to communicate with Veilid. A real chat program would not look like this:
 
 - A lot of code is duplicated. This was on purpose so that each function would be readable and understandable without having to trace through lots of helper functions.
-- The messaging flow is too simple. Each party types a message and sends it. Then their app polls for a response until one arrives. A real app wouldn't block like that.
+- The user interface is too simple. If you're halfway through typing a message when your app receives one from the other party, the inbound message will make a mess of your screen.
+- The messaging flow is too simple. If you send messages faster than the other party can receive them, some of your messages old will get overwritten by new ones.
 - Users have to trade their public keys, and even the chat's DHT key, through another channel like SMS.
 
-But then, the major portions of a real app wouldn't fit on a single screen. This just shows how all the moving parts fit together. Your challenge is to take them and build something better!
+But then, the major portions of a real app wouldn't fit on a single screen. This demo just shows how all the moving parts fit together. Your challenge is to take them and build something better!
 
 ## Installation
 
