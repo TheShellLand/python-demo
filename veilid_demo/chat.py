@@ -91,6 +91,7 @@ async def receiver(
     key: veilid.TypedKey,
     secret: veilid.SharedSecret,
     recv_subkey: veilid.ValueSubkey,
+    name: str
 ):
     """Wait for new data from the DHT and write it to the screen."""
 
@@ -132,7 +133,7 @@ async def receiver(
             return
 
         LOG.debug("receiver:Got new {msg=} at DHT {key=}, {resp.seq=}")
-        print(f"\nRECV< {msg}")
+        print(f"\n{name}> {msg}")
         last_seq = resp.seq
 
 
@@ -185,7 +186,7 @@ async def start(host: str, port: int, name: str):
 
         # The party initiating the chat writes to subkey 0 and reads from subkey 1.
         send_task = asyncio.create_task(sender(router, crypto_system, record.key, secret, 0))
-        recv_task = asyncio.create_task(receiver(router, crypto_system, record.key, secret, 1))
+        recv_task = asyncio.create_task(receiver(router, crypto_system, record.key, secret, 1, name))
 
         try:
             LOG.debug("start:Starting the chat")
@@ -233,7 +234,7 @@ async def respond(host: str, port: int, name: str, key: str):
 
         # The party responding to the chat writes to subkey 1 and reads from subkey 0.
         send_task = asyncio.create_task(sender(router, crypto_system, key, secret, 1))
-        recv_task = asyncio.create_task(receiver(router, crypto_system, key, secret, 0))
+        recv_task = asyncio.create_task(receiver(router, crypto_system, key, secret, 0, name))
 
         try:
             LOG.debug("respond:Starting the chat")
@@ -355,9 +356,7 @@ def handle_command_line(arglist: Optional[list[str]] = None):
     parser = argparse.ArgumentParser(description="Veilid chat demonstration")
     parser.add_argument("--host", default="localhost", help="Address of the Veilid server host.")
     parser.add_argument("--port", type=int, default=5959, help="Port of the Veilid server.")
-    parser.add_argument(
-        "--verbose", "-v", default=0, action="count", help="Increase logging verbosity."
-    )
+    parser.add_argument("--verbose", "-v", default=0, action="count")
 
     subparsers = parser.add_subparsers(required=True)
 
