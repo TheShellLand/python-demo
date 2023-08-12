@@ -97,7 +97,7 @@ sequenceDiagram
     loop Until done
         # Alice sends a message to Bob.
 
-        # First, she creates a random nonce. This is done for reach message.
+        # First, she creates a random nonce. This is done for each message.
         Alice ->> Va: random_nonce()
         Va ->> Alice: nonce
 
