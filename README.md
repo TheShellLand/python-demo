@@ -71,87 +71,82 @@ sequenceDiagram
     participant Vb as Bob's Veilid
     actor Bob
 
-    # Alice and Bob generate keypairs. They send their public keys to each other.
+
+    Note over Alice,Bob: Alice and Bob generate keypairs.
     Alice ->> Va: Generate key
     Va ->> Alice: keypair
     Bob ->> Vb: Generate key
     Vb ->> Bob: keypair
+    Note over Alice,Bob: Alice and Bob send their public keys to each other.
     Alice -->> Bob: Alice's pubkey (out-of-band)
     Bob -->> Alice: Bob's pubkey (out-of-band)
 
-    # Alice starts a chat by getting a shared secret.
+    Note over Alice,Va: Alice starts a chat by<br/>getting a shared secret.
     Alice ->> Va: cached_dh()<br>(Bob's pubkey, Alice's secret key)
     Va ->> Alice: secret
 
-    # Alice creates a DHT record.
+    Note over Alice,Va: Alice creates a DHT record.
     Alice ->> Va: Create DHT record
     Va ->> Alice: DHT key
 
-    # Alice sends the DHT record's key to Bob.
+    Note over Alice,Bob: Alice sends the DHT record's key to Bob.
     Alice -->> Bob: DHT key (out-of-band)
 
-    # Bob creates a shared secret. It will be the same as Alice's.
+    Note over Bob,Vb: Bob creates a shared secret.<br/>It will be the same as Alice's.
     Bob ->> Vb: cached_dh()<br>(Alice's pubkey, Bob's secret key)
     Vb ->> Bob: secret
 
     loop Until done
-        # Alice sends a message to Bob.
+        Note over Alice,Bob: Alice sends a message to Bob.
 
-        # First, she creates a random nonce. This is done for each message.
+        Note over Alice,Va: First, she creates a random nonce.<br/>This is done for each message.
         Alice ->> Va: random_nonce()
         Va ->> Alice: nonce
 
-        # Then she encrypts the message with the shared key and the nonce.
+        Note over Alice,Va: Then she encrypts the message with<br/>the shared key and the nonce.
         Alice ->> Va: encrypt("Message", secret, nonce)
         Va ->> Alice: ciphertext
 
-        # Alice updates the DHT record's "0" subkey with the nonce plus
-        # the encrypted text.
+        Note over Alice,Va: Alice updates the DHT record's "0" subkey<br/>with the nonce plus the encrypted text.
         Alice ->> Va: set_dht_value(0, nonce+ciphertext)
 
-        # Veilid magic happens!
+        Note over Va,Vb:  Veilid magic happens!
         Va ->> Magic: Updated DHT key
         Magic ->> Vb: Updated DHT key
 
-        # Meanwhile, Bob is polling the DHT key's "0" subkey, waiting
-        # for a message to appear.
+        Note over Bob,Vb:  Meanwhile, Bob is polling the DHT key's "0"<br/>subkey, waiting for a message to appear.
         Bob ->> Vb: get_dht_value(0)
         Vb ->> Bob: nonce+ciphertext
 
-        # Bob decrypts Alice's encrypted message with the shared secret
-        # and the nonce that was send with the ciphertext.
+        Note over Bob,Vb: Bob decrypts Alice's encrypted message<br/>with the shared secret and the nonce<br/>that was send with the ciphertext.
         Bob ->> Vb: decrypt(ciphertext, secret, nonce)
         Vb->> Bob: "Message"
 
-        # Bob replies to Alice with a similar process.
+        Note over Alice,Bob: Bob replies to Alice with a similar process.
 
-        # First, he asks for a random nonce. Again, he uses a different
-        # nonce each time!
+        Note over Bob,Vb: First, he asks for a random nonce.<br/>Again, he uses a different nonce each time!
         Bob ->> Vb: random_nonce()
         Vb ->> Bob: nonce
 
-        # Bob encrypt's his reply with the shared secret and nonce.
+        Note over Bob,Vb: Bob encrypt's his reply with<br/>the shared secret and nonce.
         Bob ->> Vb: encrypt("Reply", secret, nonce)
         Vb ->> Bob: ciphertext
 
-        # Although Bob reads from subkey 0, he writes to subkey 1.
+        Note over Bob,Vb:  Although Bob reads from subkey 0,<br/>he writes to subkey 1.
         Bob ->> Vb: set_dht_value(1, nonce+ciphertext)
-        Vb ->> Magic: Updated DHT key
 
-        # More Veilid magic!
+        Note over Va,Vb: More Veilid magic!
+        Vb ->> Magic: Updated DHT key
         Magic ->> Va: Updated DHT key
 
-        # Alice is polling subkey 1 for Alice's encrypted response.
+        Note over Alice,Va: Alice is polling subkey 1 for Alice's<br/>encrypted response.
         Alice ->> Va: get_dht_value(1)
         Va ->> Alice: nonce+ciphertext
 
-        # Alice decrypts Bob's encrypted reply with the shared secret
-        # and the nonce accompanying the message.
+        Note over Alice,Va:  Alice decrypts Bob's encrypted reply<br/>with the shared secret and the<br/>nonce accompanying the message.
         Alice ->> Va: decrypt(ciphertext, secret, nonce)
         Va ->> Alice: "Reply"
 
-        # ...and the repeat until one of them closes the chat.
+        Note over Alice,Bob: ...and the repeat until one of them closes the chat.
     end
 ```
-
-(Tip: read the text of this file to see more comments!)
