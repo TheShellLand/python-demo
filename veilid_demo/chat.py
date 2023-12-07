@@ -260,6 +260,10 @@ async def keygen(host: str, port: int):
 
     if await config.load_self_key(conn):
         print("You already have a keypair.")
+        
+        # print the keypair
+        print(await dump_keystore(host, port))
+        
         sys.exit(1)
 
     LOG.debug("keygen:Getting a crypto system")
