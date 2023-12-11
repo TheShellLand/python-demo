@@ -9,7 +9,7 @@ packages = [{include = "veilid_demo"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-veilid = "^0.2.5"
+veilid = "0.2.5"
 
 [tool.poetry.scripts]
 chat = 'veilid_demo.chat:handle_command_line'
