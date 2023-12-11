@@ -176,13 +176,13 @@ files = [
 
 [[package]]
 name = "veilid"
-version = "0.1.7"
+version = "0.2.5"
 description = ""
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "veilid-0.1.7-py3-none-any.whl", hash = "sha256:422af84e2c8b5f41d14780387c995ed523fbeb8fd13c069775722aa44a587323"},
-    {file = "veilid-0.1.7.tar.gz", hash = "sha256:1e21c36061346bc075f74601d10bd30ee81113c47b2dc2d994a7acbf0f8e3e87"},
+    {file = "veilid-0.2.5-py3-none-any.whl", hash = "sha256:98d5d1b9817f5f919ae6437bcbae4c9759c7d4aa153113397aaf7593b75ddecb"},
+    {file = "veilid-0.2.5.tar.gz", hash = "sha256:c5dffc0d3e94c78df4f37f32dd6b9892202af898f340183aa1c02d28e2140b5e"},
 ]
 
 [package.dependencies]
@@ -191,4 +191,4 @@ jsonschema = ">=4.17.3,<5.0.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "87c6c85136ae233d0701dc6d9bb6493d83ba843485b14bdf26080185d741397b"
+content-hash = "9c99d3a0a6c839d1a4f4ceeedbbc9115877d27da8b206437e6482aae753ad94a"
