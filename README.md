@@ -26,7 +26,7 @@ Your new public key is: d3aDb3ef
 Share it with your friends!
 ```
 
-_Note: This writes your new private key to a file called `.demokeys`. Don't do that in your app!_
+This writes your new private key to the local keystore. Do _not_ store your local keys to other files, they are not encrypted!
 
 Copy the public key and send it to a friend you want to chat with. Have your friend do the same.
 
