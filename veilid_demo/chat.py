@@ -164,7 +164,7 @@ async def start(host: str, port: int, name: str):
     ]
 
     LOG.debug("start:Opening a private routing context")
-    router = await (await conn.new_routing_context()).with_privacy()
+    router = await (await conn.new_routing_context()).with_default_safety()
     LOG.debug("start:Getting a crypto system")
     crypto_system = await conn.get_crypto_system(veilid.CryptoKind.CRYPTO_KIND_VLD0)
     async with crypto_system, router:
@@ -221,7 +221,7 @@ async def respond(host: str, port: int, name: str, key: str):
         sys.exit(1)
 
     LOG.debug("respond:Opening a private routing context")
-    router = await (await conn.new_routing_context()).with_privacy()
+    router = await (await conn.new_routing_context()).with_default_safety()
     LOG.debug("respond:Getting a crypto system")
     crypto_system = await conn.get_crypto_system(veilid.CryptoKind.CRYPTO_KIND_VLD0)
     async with crypto_system, router:
