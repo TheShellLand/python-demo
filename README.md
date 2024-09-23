@@ -16,7 +16,9 @@ But then, the major portions of a real app wouldn't fit on a single screen. This
 
 ## Usage
 
-First, run `veilid-server`. This demo tries to connect to localhost port 5959 by default. You can override that with the `--host` and `--port` arguments.
+First, run `veilid-server`. If you don't have Veilid installed and don't know how to run `veilid-server`, refer to [the installing guide](https://gitlab.com/veilid/veilid/-/blob/main/INSTALL.md).
+
+This demo tries to connect to localhost port 5959 by default. You can override that with the `--host` and `--port` arguments.
 
 Create your cryptographic keypair:
 
