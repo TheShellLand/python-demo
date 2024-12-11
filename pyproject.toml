@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "veilid-demo"
-version = "0.1.0"
+version = "0.2.0"
 description = "Demonstrate the Veilid decentralized application framework"
 authors = ["Your Name <you@example.com>"]
 license = "MPL-2.0"
@@ -8,8 +8,8 @@ readme = "README.md"
 packages = [{include = "veilid_demo"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-veilid = "0.2.5"
+python = ">=3.12.5,<4.0"
+veilid = ">=0.4.1"
 
 [tool.poetry.scripts]
 chat = 'veilid_demo.chat:handle_command_line'
