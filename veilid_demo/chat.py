@@ -140,13 +140,12 @@ async def receiver(
 # Chat commands triggered from the command line
 
 
-async def start(host: str, port: int, name: str):
+async def start(name: str):
     """Begin a conversation with a friend."""
 
-    LOG.info(f"start:{host=}, {port=}, {name=}")
+    LOG.info(f"start: {name=}")
 
-    LOG.debug(f"start:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"start:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     my_keypair = await config.load_self_key(conn)
@@ -203,13 +202,12 @@ async def start(host: str, port: int, name: str):
         send_task.cancel()
 
 
-async def respond(host: str, port: int, name: str, key: str):
+async def respond(name: str, key: str):
     """Reply to a friend's chat."""
 
-    LOG.info(f"respond:{host=}, {port=}, {name=}, {key=}")
+    LOG.info(f"respond:{name=}, {key=}")
 
-    LOG.debug(f"respond:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"respond:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     my_keypair = await config.load_self_key(conn)
@@ -252,20 +250,19 @@ async def respond(host: str, port: int, name: str, key: str):
         send_task.cancel()
 
 
-async def keygen(host: str, port: int):
+async def keygen():
     """Generate a keypair."""
 
-    LOG.info(f"keygen:{host=}, {port=}")
+    LOG.info(f"keygen:")
 
-    LOG.debug(f"keygen:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"keygen:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     if await config.load_self_key(conn):
         print("You already have a keypair.")
         
         # print the keypair
-        print(await dump_keystore(host, port))
+        print(await dump_keystore())
         
         sys.exit(1)
 
@@ -282,26 +279,24 @@ async def keygen(host: str, port: int):
     print("Share it with your friends!")
 
 
-async def delete_keystore(host: str, port: int):
+async def delete_keystore():
     """Delete the keystore database."""
 
-    LOG.info(f"delete_keystore:{host=}, {port=}")
+    LOG.info(f"delete_keystore:")
 
-    LOG.debug(f"delete_keystore:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"delete_keystore:Connecting to the Veilid API at  {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     LOG.debug("delete_keystore:Deleting the keystore")
     await config.delete_keystore(conn)
 
 
-async def dump_keystore(host: str, port: int):
+async def dump_keystore():
     """Print the contents of the keystore database."""
 
-    LOG.info(f"dump_keystore:{host=}, {port=}")
+    LOG.info(f"dump_keystore:")
 
-    LOG.debug(f"dump_keystore:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"dump_keystore:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     my_keypair = await config.load_self_key(conn)
@@ -323,25 +318,23 @@ async def dump_keystore(host: str, port: int):
         print("    <unset>")
 
 
-async def add_friend(host: str, port: int, name: str, pubkey: str):
+async def add_friend(name: str, pubkey: str):
     """Add a friend's public key."""
 
-    LOG.info(f"add_friend:{host=}, {port=}, {name=}, {pubkey=}")
+    LOG.info(f"add_friend:{name=}, {pubkey=}")
 
-    LOG.debug(f"add_friend:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"add_friend:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     await config.store_friend_key(conn, name, veilid.PublicKey(pubkey))
 
 
-async def clean(host: str, port: int, key: str):
+async def clean(key: str):
     """Delete a DHT key."""
 
-    LOG.info(f"clean:{host=}, {port=}, {key=}")
+    LOG.info(f"clean:{key=}")
 
-    LOG.debug(f"clean:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    #DELETE conn = await #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    LOG.debug(f"clean:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
     LOG.debug("clean:Opening a non-private routing context")
