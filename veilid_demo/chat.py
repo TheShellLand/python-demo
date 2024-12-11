@@ -146,7 +146,8 @@ async def start(host: str, port: int, name: str):
     LOG.info(f"start:{host=}, {port=}, {name=}")
 
     LOG.debug(f"start:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     my_keypair = await config.load_self_key(conn)
     if my_keypair is None:
@@ -208,7 +209,8 @@ async def respond(host: str, port: int, name: str, key: str):
     LOG.info(f"respond:{host=}, {port=}, {name=}, {key=}")
 
     LOG.debug(f"respond:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     my_keypair = await config.load_self_key(conn)
     if my_keypair is None:
@@ -256,7 +258,8 @@ async def keygen(host: str, port: int):
     LOG.info(f"keygen:{host=}, {port=}")
 
     LOG.debug(f"keygen:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     if await config.load_self_key(conn):
         print("You already have a keypair.")
@@ -285,7 +288,8 @@ async def delete_keystore(host: str, port: int):
     LOG.info(f"delete_keystore:{host=}, {port=}")
 
     LOG.debug(f"delete_keystore:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     LOG.debug("delete_keystore:Deleting the keystore")
     await config.delete_keystore(conn)
@@ -297,7 +301,8 @@ async def dump_keystore(host: str, port: int):
     LOG.info(f"dump_keystore:{host=}, {port=}")
 
     LOG.debug(f"dump_keystore:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     my_keypair = await config.load_self_key(conn)
     if my_keypair:
@@ -324,7 +329,8 @@ async def add_friend(host: str, port: int, name: str, pubkey: str):
     LOG.info(f"add_friend:{host=}, {port=}, {name=}, {pubkey=}")
 
     LOG.debug(f"add_friend:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     await config.store_friend_key(conn, name, veilid.PublicKey(pubkey))
 
@@ -335,7 +341,8 @@ async def clean(host: str, port: int, key: str):
     LOG.info(f"clean:{host=}, {port=}, {key=}")
 
     LOG.debug(f"clean:Connecting to the Veilid API at {host=}, {port=}, {noop_callback}")
-    conn = await veilid.json_api_connect(host, port, noop_callback)
+    #DELETE conn = await #DELETE conn = await veilid.json_api_connect(host, port, noop_callback)
+    conn = await veilid.api_connector(noop_callback)
 
     LOG.debug("clean:Opening a non-private routing context")
     router = await conn.new_routing_context()
@@ -358,8 +365,8 @@ def handle_command_line(arglist: Optional[list[str]] = None):
         arglist = sys.argv[1:]
 
     parser = argparse.ArgumentParser(description="Veilid chat demonstration")
-    parser.add_argument("--host", default="localhost", help="Address of the Veilid server host.")
-    parser.add_argument("--port", type=int, default=5959, help="Port of the Veilid server.")
+    #DELETE parser.add_argument("--host", default="localhost", help="Address of the Veilid server host.")
+    #DELETE parser.add_argument("--port", type=int, default=5959, help="Port of the Veilid server.")
     parser.add_argument("--verbose", "-v", default=0, action="count")
 
     subparsers = parser.add_subparsers(required=True)
