@@ -3,7 +3,7 @@ FROM ghcr.io/theshellland/veilid-node:latest
 COPY entry.sh /entry.sh
 COPY veilid_demo /veilid_demo
 
-RUN python3 -m pip install -U veilid pip
+RUN python3 -m pip install --break-system-packages -U veilid pip
 
 # config
 VOLUME /root/.config/veilid/
