@@ -153,15 +153,19 @@ async def start(name: str):
     LOG.debug(f"start:Connecting to the Veilid API at {noop_callback}")
     conn = await veilid.api_connector(noop_callback)
 
+    LOG.debug(f'start:{conn=}')
+    LOG.debug(f'start:{conn.__dict__=}')
+    LOG.debug(f'start:{dir(conn)=}')
+
     my_keypair = await config.load_self_key(conn)
     if my_keypair is None:
         print("Use 'keygen' to generate a keypair first.")
-        sys.exit(1)
+        return
 
     their_key = await config.load_friend_key(conn, name)
     if their_key is None:
         print("Add their key with 'add-friend' first.")
-        sys.exit(1)
+        return
 
     members = [
         veilid.DHTSchemaSMPLMember(my_keypair.key(), 1),
@@ -218,12 +222,12 @@ async def respond(name: str, key: str):
     my_keypair = await config.load_self_key(conn)
     if my_keypair is None:
         print("Use 'keygen' to generate a keypair first.")
-        sys.exit(1)
+        return
 
     their_key = await config.load_friend_key(conn, name)
     if their_key is None:
         print("Add their key with 'add-friend' first.")
-        sys.exit(1)
+        return
 
     LOG.debug("respond:Opening a private routing context")
     router = await (await conn.new_routing_context()).with_default_safety()
@@ -269,7 +273,7 @@ async def keygen():
         # print the keypair
         print(await dump_keystore())
 
-        sys.exit(1)
+        return
 
     LOG.debug("keygen:Getting a crypto system")
     crypto_system = await conn.get_crypto_system(veilid.CryptoKind.CRYPTO_KIND_VLD0)
@@ -424,3 +428,4 @@ if __name__ == "__main__":
 
     asyncio.run(keygen())
     asyncio.run(start('vuser'))
+    LOG.debug('DONE')
