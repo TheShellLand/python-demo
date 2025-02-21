@@ -154,8 +154,8 @@ async def start(name: str):
     conn = await veilid.api_connector(noop_callback)
 
     LOG.debug(f'start:{conn=}')
-    LOG.debug(f'start:{conn.__dict__=}')
-    LOG.debug(f'start:{dir(conn)=}')
+    # LOG.debug(f'start:{conn.__dict__=}')
+    # LOG.debug(f'start:{dir(conn)=}')
 
     my_keypair = await config.load_self_key(conn)
     if my_keypair is None:
@@ -423,9 +423,31 @@ def handle_command_line(arglist: Optional[list[str]] = None):
     asyncio.run(func(**kwargs))
 
 
+async def main():
+    LOG.debug(f'main :: >>>>')
+    conn = await veilid.api_connector(noop_callback)
+    LOG.debug(f'main :: {conn=}')
+
+    tdb = await conn.open_table_db('hello', 2)
+    LOG.debug(f'main :: {tdb=}')
+
+    async with tdb:
+        LOG.debug(f'main :: {await tdb.get_keys()=}')
+        LOG.debug(f'main :: {await tdb.get_column_count()=}')
+        LOG.debug(f'main :: {await tdb.store(key='keykey'.encode(), value='vvv'.encode())=}')
+        LOG.debug(f'main :: {await tdb.get_keys()=}')
+        LOG.debug(f'main :: {await tdb.load('keykey'.encode())=}')
+
+        # value = await tdb.load(key_bytes)
+
+
 if __name__ == "__main__":
     # handle_command_line()
 
-    asyncio.run(keygen())
-    asyncio.run(start('vuser'))
+    asyncio.run(main())
+
+    # asyncio.run(keygen())
+    # asyncio.run(add_friend('vfwend2', '2W2uDUeMR_lKipXU4HUC4aCaOJS5_bagnH4R9aFQsHw'))
+    # asyncio.run(start('vuser'))
+
     LOG.debug('DONE')
