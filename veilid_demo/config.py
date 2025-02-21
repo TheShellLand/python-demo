@@ -74,7 +74,7 @@ async def friends(conn: veilid.json_api._JsonVeilidAPI) -> list[str]:
 
 
 async def store_friend_key(
-    conn: veilid.json_api._JsonVeilidAPI, name: str, pubkey: veilid.PublicKey
+        conn: veilid.json_api._JsonVeilidAPI, name: str, pubkey: veilid.PublicKey
 ):
     """Write a friend's public key to the keystore."""
 
@@ -82,7 +82,7 @@ async def store_friend_key(
 
 
 async def load_friend_key(
-    conn: veilid.json_api._JsonVeilidAPI, name: str
+        conn: veilid.json_api._JsonVeilidAPI, name: str
 ) -> Optional[veilid.PublicKey]:
     """Read a friend's public key from the keystore."""
 

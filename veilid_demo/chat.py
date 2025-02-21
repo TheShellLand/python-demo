@@ -46,11 +46,11 @@ async def async_input(prompt: str = "") -> str:
 
 
 async def sender(
-    router: veilid.api.RoutingContext,
-    crypto_system: veilid.CryptoSystem,
-    key: veilid.TypedKey,
-    secret: veilid.SharedSecret,
-    send_subkey: veilid.ValueSubkey,
+        router: veilid.api.RoutingContext,
+        crypto_system: veilid.CryptoSystem,
+        key: veilid.TypedKey,
+        secret: veilid.SharedSecret,
+        send_subkey: veilid.ValueSubkey,
 ):
     """Read input and write it to the DHT."""
 
@@ -91,12 +91,12 @@ async def sender(
 
 
 async def receiver(
-    router: veilid.api.RoutingContext,
-    crypto_system: veilid.CryptoSystem,
-    key: veilid.TypedKey,
-    secret: veilid.SharedSecret,
-    recv_subkey: veilid.ValueSubkey,
-    name: str
+        router: veilid.api.RoutingContext,
+        crypto_system: veilid.CryptoSystem,
+        key: veilid.TypedKey,
+        secret: veilid.SharedSecret,
+        recv_subkey: veilid.ValueSubkey,
+        name: str
 ):
     """Wait for new data from the DHT and write it to the screen."""
 
@@ -265,10 +265,10 @@ async def keygen():
 
     if await config.load_self_key(conn):
         print("You already have a keypair.")
-        
+
         # print the keypair
         print(await dump_keystore())
-        
+
         sys.exit(1)
 
     LOG.debug("keygen:Getting a crypto system")
@@ -363,8 +363,8 @@ def handle_command_line(arglist: Optional[list[str]] = None):
         arglist = sys.argv[1:]
 
     parser = argparse.ArgumentParser(description="Veilid chat demonstration")
-    #DELETE parser.add_argument("--host", default="localhost", help="Address of the Veilid server host.")
-    #DELETE parser.add_argument("--port", type=int, default=5959, help="Port of the Veilid server.")
+    # DELETE parser.add_argument("--host", default="localhost", help="Address of the Veilid server host.")
+    # DELETE parser.add_argument("--port", type=int, default=5959, help="Port of the Veilid server.")
     parser.add_argument("--verbose", "-v", default=0, action="count")
 
     subparsers = parser.add_subparsers(required=True)
