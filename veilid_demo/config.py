@@ -6,6 +6,7 @@ from typing import Optional
 import veilid
 
 LOG = logging.getLogger(__name__)
+LOG.setLevel(logging.DEBUG)
 
 KEY_TABLE = "veilid-demo"
 SELF_KEY = "self"

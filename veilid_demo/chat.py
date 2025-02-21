@@ -9,14 +9,19 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-from veilid_demo import config
+import config
 
 import veilid
 
 QUIT = "QUIT"
 NONCE_LENGTH = 24
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(levelname)s	%(name)s:%(lineno)s	%(funcName)s	%(message)s')
+
 LOG = logging.getLogger(__name__)
+LOG.setLevel(logging.DEBUG)
+
 
 # Helper functions
 
@@ -415,4 +420,7 @@ def handle_command_line(arglist: Optional[list[str]] = None):
 
 
 if __name__ == "__main__":
-    handle_command_line()
+    # handle_command_line()
+
+    asyncio.run(keygen())
+    asyncio.run(start('vuser'))
