@@ -1,0 +1,33 @@
+FROM ghcr.io/theshellland/veilid-node:latest
+
+COPY entry.sh /entry.sh
+COPY veilid_demo /veilid_demo
+
+RUN python3 -m pip install -U veilid pip
+
+# config
+VOLUME /root/.config/veilid/
+
+# State holds the node ID etc. to persist between runs
+VOLUME /root/.local/share/veilid/
+
+# logs
+VOLUME /logs
+
+# data
+VOLUME /var/db/veilid-server
+
+# listen_address
+# IPC is used by default
+EXPOSE 5959
+
+# I see this port used in logs
+EXPOSE 5150
+
+# grpc_endpoint
+EXPOSE 4317
+
+EXPOSE 80
+EXPOSE 443
+
+ENTRYPOINT ["/bin/bash", "/entry.sh"]
