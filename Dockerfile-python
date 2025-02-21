@@ -30,4 +30,6 @@ EXPOSE 4317
 EXPOSE 80
 EXPOSE 443
 
+WORKDIR /veilid_demo
+
 ENTRYPOINT ["/bin/bash", "/entry.sh"]
